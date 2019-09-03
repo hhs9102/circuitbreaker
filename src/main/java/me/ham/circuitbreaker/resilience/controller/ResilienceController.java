@@ -5,21 +5,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController(value = "/resilence")
+@RestController
+@RequestMapping(value = "/resilience")
 public class ResilienceController {
 
-        @Autowired
-        ResilienceService resilienceService;
+    @Autowired
+    ResilienceService resilienceService;
 
-        @RequestMapping(value = "/success")
-        public String success(){
-            return resilienceService.sucess();
-        }
+    @RequestMapping(value = "/success")
+    public String success(){
+        return resilienceService.success();
+    }
 
-        @RequestMapping(value = "/failure")
-        public String failure() throws Exception {
-            return resilienceService.failure();
-        }
-
-
+    @RequestMapping(value = "/failure")
+    public String failure(){
+        return resilienceService.failure();
+    }
+    @RequestMapping(value = "/failure/lamda")
+    public String failureLamda(){
+        return resilienceService.failureLamda();
+    }
 }

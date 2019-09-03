@@ -1,6 +1,6 @@
 package me.ham.circuitbreaker.resilience.service;
 
-import me.ham.circuitbreaker.resilience.connector.ResilienceConnectorImpl;
+import me.ham.circuitbreaker.resilience.connector.ResilienceConnector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,13 +8,16 @@ import org.springframework.stereotype.Service;
 public class ResilienceService {
 
     @Autowired
-    ResilienceConnectorImpl resilienceConnector;
+    ResilienceConnector resilienceConnector;
 
-    public String sucess(){
-        return resilienceConnector.sucess();
+    public String success(){
+        return resilienceConnector.success();
     }
 
-    public String failure() throws Exception {
+    public String failure(){
         return resilienceConnector.failure();
+    }
+    public String failureLamda(){
+        return resilienceConnector.failureLamda();
     }
 }
