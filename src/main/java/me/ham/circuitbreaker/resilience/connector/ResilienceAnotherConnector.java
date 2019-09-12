@@ -6,6 +6,7 @@ import io.github.resilience4j.bulkhead.BulkheadRegistry;
 import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.vavr.control.Try;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,8 @@ public class ResilienceAnotherConnector implements Connector {
     }
 
     @Override
-    @Bulkhead(name = "hshama", fallbackMethod = "fallback")
+//    @Bulkhead(name = "hsham", fallbackMethod = "fallback")
+    @Retry(name = "hsham", fallbackMethod = "fallback")
     public String success() throws InterruptedException {
         Thread.sleep(1000);
         System.out.println(successCnt.addAndGet(1) + "This is success.");
@@ -31,7 +33,8 @@ public class ResilienceAnotherConnector implements Connector {
     }
 
     @Override
-    @CircuitBreaker(name = "hsham", fallbackMethod = "fallback")
+//    @CircuitBreaker(name = "hsham", fallbackMethod = "fallback")
+    @Retry(name = "hsham", fallbackMethod = "fallback")
     public String failure() {
         throw new RuntimeException("This is runtime Error.");
     }
