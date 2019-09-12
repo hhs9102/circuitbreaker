@@ -1,31 +1,32 @@
 package me.ham.circuitbreaker.resilience.service;
 
+import me.ham.circuitbreaker.resilience.connector.ResilienceAnotherConnector;
 import me.ham.circuitbreaker.resilience.connector.ResilienceConnector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ResilienceService {
+public class ResilienceAnotherService {
 
     @Autowired
-    ResilienceConnector resilienceConnector;
+    ResilienceAnotherConnector resilienceAnotherConnector;
 
     public String success() throws InterruptedException {
-        return resilienceConnector.success();
+        return resilienceAnotherConnector.success();
     }
 
     public String failure(){
-        return resilienceConnector.failure();
+        return resilienceAnotherConnector.failure();
     }
     public String failureLamda(){
-        return resilienceConnector.failureLamda();
+        return resilienceAnotherConnector.failureLamda();
     }
 
     public void reset(){
-        resilienceConnector.reset();
+        resilienceAnotherConnector.reset();
     }
 
     public String print() {
-        return resilienceConnector.print();
+        return resilienceAnotherConnector.print();
     }
 }

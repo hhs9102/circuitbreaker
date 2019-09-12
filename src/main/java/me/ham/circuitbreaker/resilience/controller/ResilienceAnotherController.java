@@ -1,6 +1,5 @@
 package me.ham.circuitbreaker.resilience.controller;
 
-import me.ham.circuitbreaker.resilience.connector.ResilienceAnotherConnector;
 import me.ham.circuitbreaker.resilience.service.ResilienceAnotherService;
 import me.ham.circuitbreaker.resilience.service.ResilienceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,34 +9,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/resilience")
-public class ResilienceController {
+@RequestMapping(value = "/resilience/another")
+public class ResilienceAnotherController {
 
     @Autowired
-    ResilienceService resilienceService;
+    ResilienceAnotherService resilienceAnotherService;
 
     @RequestMapping(value = "/success")
     public String success() throws InterruptedException {
-        return resilienceService.success();
+        return resilienceAnotherService.success();
     }
 
     @RequestMapping(value = "/failure")
     public String failure(){
-        return resilienceService.failure();
+        return resilienceAnotherService.failure();
     }
     @RequestMapping(value = "/failure/lamda")
     public String failureLamda(){
-        return resilienceService.failureLamda();
+        return resilienceAnotherService.failureLamda();
     }
 
     @PutMapping(value = "reset")
     public void reset(){
-        resilienceService.reset();
+        resilienceAnotherService.reset();
     }
 
     @GetMapping(value = "print")
     public String print(){
-        return resilienceService.print();
+        return resilienceAnotherService.print();
     }
 
 }

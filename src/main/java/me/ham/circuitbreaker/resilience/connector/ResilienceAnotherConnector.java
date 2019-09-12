@@ -14,8 +14,7 @@ import java.util.function.Supplier;
 
 @CircuitBreaker(name = "hsham")
 @Component
-public class ResilienceConnector implements Connector {
-
+public class ResilienceAnotherConnector implements Connector {
     AtomicInteger successCnt;
     AtomicInteger failureCnt;
     {
@@ -24,8 +23,7 @@ public class ResilienceConnector implements Connector {
     }
 
     @Override
-    @CircuitBreaker(name = "hsham", fallbackMethod = "fallback")
-//    @Bulkhead(name = "hsham", fallbackMethod = "fallback")
+    @Bulkhead(name = "hshama", fallbackMethod = "fallback")
     public String success() throws InterruptedException {
         Thread.sleep(1000);
         System.out.println(successCnt.addAndGet(1) + "This is success.");
