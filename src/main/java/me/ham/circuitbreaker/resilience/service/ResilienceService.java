@@ -28,4 +28,19 @@ public class ResilienceService {
     public String print() {
         return resilienceConnector.print();
     }
+
+    public String circuitBreaker() {
+        return resilienceConnector.circuitBreaker();
+    }
+
+    public String bulkhead() throws InterruptedException {
+        return resilienceConnector.bulkhead();
+    }
+
+    public String retry() {
+        return resilienceConnector.retry();
+    }
+    public String all() {
+        return resilienceConnector.all();
+    }
 }

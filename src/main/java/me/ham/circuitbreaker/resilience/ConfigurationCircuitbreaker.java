@@ -2,47 +2,65 @@ package me.ham.circuitbreaker.resilience;
 
 import io.github.resilience4j.bulkhead.BulkheadConfig;
 import io.github.resilience4j.bulkhead.BulkheadRegistry;
-import io.github.resilience4j.core.registry.EntryAddedEvent;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.circuitbreaker.configure.CircuitBreakerConfiguration;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
-import java.util.Objects;
 
 @Configuration
+@Slf4j
 public class ConfigurationCircuitbreaker {
 
     @Autowired
-    private final BulkheadRegistry bulkheadRegistry;
+    CircuitBreakerRegistry circuitBreakerRegistry;
 
     @Autowired
-    private final RetryRegistry retryRegistry;
+    BulkheadRegistry bulkheadRegistry;
 
-    public ConfigurationCircuitbreaker(BulkheadRegistry bulkheadRegistry, RetryRegistry retryRegistry) {
-        BulkheadConfig bulkheadConfig = new BulkheadConfig.Builder()
-                                                            .maxConcurrentCalls(30)
-                                                            .maxWaitDuration(Duration.ofMillis(500))
-                                                            .build();
+    @Autowired
+    RetryRegistry retryRegistry;
+
+    public ConfigurationCircuitbreaker(CircuitBreakerRegistry circuitBreakerRegistry, BulkheadRegistry bulkheadRegistry, RetryRegistry retryRegistry) {
+        circuitBreakerRegist(circuitBreakerRegistry);
+        bulkheadRegist(bulkheadRegistry);
+        retryRegist(retryRegistry);
+    }
+
+    private void circuitBreakerRegist(CircuitBreakerRegistry circuitBreakerRegistry) {
+        CircuitBreakerConfig circuitBreakerConfig
+                = new CircuitBreakerConfig.Builder()
+                .ringBufferSizeInClosedState(50)
+                .waitDurationInOpenState(Duration.ofMillis(5000))
+                .build();
+        this.circuitBreakerRegistry = circuitBreakerRegistry;
+        circuitBreakerRegistry.circuitBreaker("hsham", circuitBreakerConfig);
+    }
+
+    private void bulkheadRegist(BulkheadRegistry bulkheadRegistry) {
+        BulkheadConfig bulkheadConfig
+                = new BulkheadConfig.Builder()
+                                    .maxConcurrentCalls(30)
+                                    .maxWaitDuration(Duration.ofMillis(500))
+                                    .build();
         this.bulkheadRegistry = bulkheadRegistry;
-        bulkheadRegistry.bulkhead("hsham",bulkheadConfig);
+        this.bulkheadRegistry.bulkhead("hsham",bulkheadConfig);
+    }
 
+    private void retryRegist(RetryRegistry retryRegistry) {
         RetryConfig retryConfig = RetryConfig.custom()
                 .waitDuration(Duration.ofMillis(100))
                 .retryExceptions(RuntimeException.class)
                 .maxAttempts(5)
                 .build();
-
         this.retryRegistry = retryRegistry;
-        retryRegistry.retry("hsham", retryConfig);
-
-        retryRegistry.getEventPublisher().onEntryAdded(
-                entryAddedEvent -> {
-                    Retry addedRetry = entryAddedEvent.getAddedEntry();
-                    System.out.println("############"+addedRetry.getName() +"is added");
-                }
-        );
+        this.retryRegistry.retry("hsham", retryConfig);
     }
 }

@@ -7,4 +7,12 @@ public interface Connector {
     String failure();
 
     String failureLamda();
+
+    String circuitBreaker();
+
+    String bulkhead() throws InterruptedException;
+
+    String retry();
+
+    String all();
 }

@@ -1,7 +1,5 @@
 package me.ham.circuitbreaker.resilience.controller;
 
-import me.ham.circuitbreaker.resilience.connector.ResilienceAnotherConnector;
-import me.ham.circuitbreaker.resilience.service.ResilienceAnotherService;
 import me.ham.circuitbreaker.resilience.service.ResilienceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,9 +23,30 @@ public class ResilienceController {
     public String failure(){
         return resilienceService.failure();
     }
+
     @RequestMapping(value = "/failure/lamda")
     public String failureLamda(){
         return resilienceService.failureLamda();
+    }
+
+    @RequestMapping(value = "/failure/circuitBreaker")
+    public String circuitBreaker(){
+        return resilienceService.circuitBreaker();
+    }
+
+    @RequestMapping(value = "/failure/bulkhead")
+    public String bulkhead() throws InterruptedException {
+        return resilienceService.bulkhead();
+    }
+
+    @RequestMapping(value = "/failure/retry")
+    public String retry(){
+        return resilienceService.retry();
+    }
+
+    @RequestMapping(value = "/failure/all")
+    public String all(){
+        return resilienceService.retry();
     }
 
     @PutMapping(value = "reset")
