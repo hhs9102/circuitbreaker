@@ -36,7 +36,6 @@ public class HystrixService {
             )
     public String success() {
         successMethodCallCnt.addAndGet(1);
-        successMethodCallCnt.addAndGet(1);
         log.info("HystrixService success method is called");
         return "This is success method.\n";
     }
@@ -84,7 +83,6 @@ public class HystrixService {
     }
 
     public String print(){
-        return "successMethodCallCnt : "+successMethodCallCnt.get() +"\nfailureMethodCallCnt : "+failureMethodCallCnt.get()+"\nfailureFallBackMethodCallCnt : "+failureFallBackMethodCallCnt.get()+
-                "\n";
+        return "successMethodCallCnt : "+successMethodCallCnt.get() +"\nfailureMethodCallCnt : "+failureMethodCallCnt.get()+"\nfailureFallBackMethodCallCnt : "+failureFallBackMethodCallCnt.get()+"\n";
     }
 }
