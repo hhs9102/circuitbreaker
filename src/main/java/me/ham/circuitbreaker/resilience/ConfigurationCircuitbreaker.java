@@ -5,11 +5,11 @@ import io.github.resilience4j.bulkhead.BulkheadRegistry;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
-import io.github.resilience4j.circuitbreaker.configure.CircuitBreakerConfiguration;
-import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
 import lombok.extern.slf4j.Slf4j;
+import me.ham.circuitbreaker.resilience.event.ResilienceStateTransitionEventHandler;
+import me.ham.circuitbreaker.resilience.event.ResilienceSuccessEventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -42,6 +42,10 @@ public class ConfigurationCircuitbreaker {
                 .build();
         this.circuitBreakerRegistry = circuitBreakerRegistry;
         circuitBreakerRegistry.circuitBreaker("hsham", circuitBreakerConfig);
+
+        CircuitBreaker circuitBreaker = this.circuitBreakerRegistry.find("hsham").get();
+        circuitBreaker.getEventPublisher().onStateTransition(new ResilienceStateTransitionEventHandler());
+        circuitBreaker.getEventPublisher().onSuccess(new ResilienceSuccessEventHandler());
     }
 
     private void bulkheadRegist(BulkheadRegistry bulkheadRegistry) {
