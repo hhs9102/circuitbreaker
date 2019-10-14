@@ -26,13 +26,12 @@ public class HystrixService {
         this.failureFallBackMethodCallCnt = new AtomicInteger(0);
     }
 
-    @HystrixCommand(fallbackMethod = "fallback"
-//            ,commandKey = "hsham"
-//            ,commandProperties = {
-//            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "4000") //요청 대기 시간
-//            ,@HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5") //최소 요청 건수
-//            ,@HystrixProperty(name = "- circuitBreaker.sleepWindowInMilliseconds", value = "5000") //서킷브레이커 지속시간
-//            }
+    @HystrixCommand(fallbackMethod = "fallback",
+            commandProperties = {
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "4000") //요청 대기 시간
+                    ,@HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5") //최소 요청 건수
+                    ,@HystrixProperty(name = "- circuitBreaker.sleepWindowInMilliseconds", value = "5000") //서킷브레이커 지속시간
+                    }
             )
     public String success() {
         successMethodCallCnt.addAndGet(1);

@@ -2,10 +2,13 @@ package me.ham.circuitbreaker.resilience.controller;
 
 import me.ham.circuitbreaker.resilience.service.ResilienceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 @RestController
 @RequestMapping(value = "/resilience")
@@ -13,6 +16,41 @@ public class ResilienceController {
 
     @Autowired
     ResilienceService resilienceService;
+
+    @RequestMapping("/{ms}")
+    public void onlyTest(@PathVariable long ms){
+        new Thread(()->{
+            Timer t = new Timer(true);
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    System.out.println("5초가 지났다.");
+                }
+            };
+
+            t.schedule(timerTask, 5000);
+        }).start();
+
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        simpleClientHttpRequestFactory.setReadTimeout(2000);
+        RestTemplate restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
+
+//        RestTemplate restTemplate = new RestTemplate((uri, httpMethod) -> {
+//
+//        });
+        try{
+
+            ResponseEntity<String> test = restTemplate.getForEntity("http://localhost:8080/connect/waitting/"+ms, String.class);
+            if(test.getStatusCode().isError()) {
+                System.out.println("test.getStatusCode().isError() true 이것이 실행되었따.");
+                System.out.println("에러발생했따~~");
+            }else{
+                System.out.println("이것이 실행되었따.");
+            }
+        } catch (RuntimeException e){
+            System.out.println(e.getMessage());
+        }
+    }
 
     @RequestMapping(value = "/success")
     public String success() throws InterruptedException {
