@@ -7,8 +7,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ResilienceService {
 
-    @Autowired
     ResilienceConnector resilienceConnector;
+
+    @Autowired
+    public ResilienceService(ResilienceConnector resilienceConnector){
+        this.resilienceConnector    = resilienceConnector;
+    }
 
     public String success() throws InterruptedException {
         return resilienceConnector.success();

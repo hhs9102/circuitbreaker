@@ -10,25 +10,36 @@ import io.github.resilience4j.retry.RetryRegistry;
 import lombok.extern.slf4j.Slf4j;
 import me.ham.circuitbreaker.resilience.event.ResilienceStateTransitionEventHandler;
 import me.ham.circuitbreaker.resilience.event.ResilienceSuccessEventHandler;
+import me.ham.circuitbreaker.resilience.service.ResilienceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
 import java.time.Duration;
 
 @Configuration
 @Slf4j
+@DependsOn(value = {"resilienceStateTransitionEventHandler"})
 public class ConfigurationCircuitbreaker {
 
-    @Autowired
     CircuitBreakerRegistry circuitBreakerRegistry;
 
-    @Autowired
     BulkheadRegistry bulkheadRegistry;
 
-    @Autowired
+    ResilienceService resilienceService;
+
     RetryRegistry retryRegistry;
 
-    public ConfigurationCircuitbreaker(CircuitBreakerRegistry circuitBreakerRegistry, BulkheadRegistry bulkheadRegistry, RetryRegistry retryRegistry) {
+    ResilienceStateTransitionEventHandler resilienceStateTransitionEventHandler;
+
+    ResilienceSuccessEventHandler resilienceSuccessEventHandler;
+
+
+    @Autowired
+    public ConfigurationCircuitbreaker(CircuitBreakerRegistry circuitBreakerRegistry, BulkheadRegistry bulkheadRegistry, RetryRegistry retryRegistry, ApplicationContext applicationContext, ResilienceStateTransitionEventHandler resilienceStateTransitionEventHandler, ResilienceSuccessEventHandler resilienceSuccessEventHandler) {
+        this.resilienceStateTransitionEventHandler = resilienceStateTransitionEventHandler;
+        this.resilienceSuccessEventHandler = resilienceSuccessEventHandler;
         circuitBreakerRegist(circuitBreakerRegistry);
         bulkheadRegist(bulkheadRegistry);
         retryRegist(retryRegistry);
@@ -44,8 +55,8 @@ public class ConfigurationCircuitbreaker {
         circuitBreakerRegistry.circuitBreaker("hsham", circuitBreakerConfig);
 
         CircuitBreaker circuitBreaker = this.circuitBreakerRegistry.find("hsham").get();
-        circuitBreaker.getEventPublisher().onStateTransition(new ResilienceStateTransitionEventHandler());
-        circuitBreaker.getEventPublisher().onSuccess(new ResilienceSuccessEventHandler());
+        circuitBreaker.getEventPublisher().onStateTransition(resilienceStateTransitionEventHandler);
+        circuitBreaker.getEventPublisher().onSuccess(resilienceSuccessEventHandler);
     }
 
     private void bulkheadRegist(BulkheadRegistry bulkheadRegistry) {
